@@ -1,0 +1,653 @@
+swagger: "2.0"
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    in: header
+    name: authorization
+
+info:
+  description: This is a simple API
+  version: 1.0.0
+  title: Blog Webedia
+  contact:
+    email: xeduardopalhares@gmail.com
+
+# tags are used for organizing operations
+tags:
+  - name: users
+  - name: articles
+  - name: authors
+  - name: comments
+
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: Cadastra um usuário
+      description: |
+        Passando as opções corretas se pode cadastrar um usuário
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/newUser"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              menssagem:
+                type: string
+        500:
+          description: Internal Server Error
+  /sessions:
+    post:
+      tags:
+        - users
+      summary: Autentica um usuário
+      description: |
+        Passando as opções corretas se pode autenticar um usuário
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Autentica"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              user:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  password:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  __v:
+                    type: string
+              token:
+                type: string
+        401:
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+  /articles:
+    get:
+      tags:
+        - articles
+      summary: Retorna uma lista de artigos
+      description: |
+        Retorna uma lista de artigos
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: O número da página
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: A Quantidade de itens que serão retornados
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Artigos"
+    post:
+      tags:
+        - articles
+      summary: Cria um artigo
+      description: |
+        Passando as opções corretas se pode criar um artigo
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/newArtigo"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Artigos"
+        400:
+          description: bad input parameter
+
+  /articles/:id:
+    put:
+      tags:
+        - articles
+      summary: Atualiza um artigo
+      description: |
+        Passando as opções corretas se pode atualizar um artigo
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o artigo
+          required: true
+          type: integer
+          format: int64
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/newArtigo"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Artigos"
+        500:
+          description: Internal Server Error
+    delete:
+      tags:
+        - articles
+      summary: Deleta um artigo
+      description: |
+        Passando as opções corretas se pode deletar um artigo
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o artigo
+          required: true
+          type: integer
+          format: int64
+      responses:
+        204:
+          description: No Content
+        500:
+          description: Internal Server Error
+    get:
+      tags:
+        - articles
+      summary: Encontra um artigo pelo id
+      description: |
+        Passando as opções corretas se pode obter um artigo
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o artigo
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ComentarioAutorArtigo"
+  /articles/pl/:pl:
+    get:
+      tags:
+        - articles
+      summary: Encontra artigo pela pl
+      description: |
+        Passando as opções corretas se pode obter um artigo
+      produces:
+        - application/json
+      parameters:
+        - name: permalink
+          in: path
+          description: Página dos aritgos
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ComentarioAutorArtigo"
+  /authors:
+    get:
+      tags:
+        - authors
+      summary: Retorna uma lista de autores
+      description: |
+        Retorna uma lista de autores
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: O número da página
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: A Quantidade de itens que serão retornados
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Autores"
+    post:
+      tags:
+        - authors
+      summary: Cadastra um autor
+      description: |
+        Passando as opções corretas se pode cadastrar um autor
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/newAutor"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Autores"
+        400:
+          description: bad input parameter
+  /authors/:id:
+    put:
+      tags:
+        - authors
+      summary: Atualiza um autor
+      description: |
+        Passando as opções corretas se pode atualizar um autor
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o autor
+          required: true
+          type: integer
+          format: int64
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/newAutor"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Autores"
+        500:
+          description: Internal Server Error
+    delete:
+      tags:
+        - authors
+      summary: Deleta um autor
+      description: |
+        Passando as opções corretas se pode deletar um autor
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o autor
+          required: true
+          type: integer
+          format: int64
+      responses:
+        204:
+          description: No Content
+        500:
+          description: Internal Server Error
+    get:
+      tags:
+        - authors
+      summary: Encontra um autor pelo id
+      description: |
+        Passando as opções corretas se pode obter um autor
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o autor
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Autores"
+        404:
+          description: Not Found
+  /comments:
+    post:
+      tags:
+        - comments
+      summary: Cadastra um comentário
+      description: |
+        Passando as opções corretas se pode cadastrar um comentário
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/newComentario"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Comentarios"
+        400:
+          description: bad input parameter
+        401:
+          description: Not authenticade
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - comments
+      summary: Retorna uma lista de comentaŕios
+      description: |
+        Retorna uma lista de comentaŕios
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: O número da página
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: A Quantidade de itens que serão retornados
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Comentarios"
+
+  /comments/:id:
+    put:
+      tags:
+        - comments
+      summary: Atualiza um comentário
+      description: |
+        Passando as opções corretas se pode atualizar um comentário
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o comentário
+          required: true
+          type: integer
+          format: int64
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/newComentario"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Comentarios"
+        500:
+          description: Internal Server Error
+        401:
+          description: Not authenticade
+        400:
+          description: Bad Reques
+    delete:
+      tags:
+        - comments
+      summary: Deleta um comentário
+      description: |
+        Passando as opções corretas se pode deletar um comentário
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o comentário
+          required: true
+          type: integer
+          format: int64
+      responses:
+        204:
+          description: No Content
+        500:
+          description: Internal Server Error
+  /comments/article/:id:
+    get:
+      tags:
+        - comments
+      summary: Encontra um comentário pelo id do artigo
+      description: |
+        Passando as opções corretas se pode obter um comentário
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id para localizar o comentário
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ComentarioUserArtigo"
+definitions:
+  newArtigo:
+    type: object
+    required:
+      - title
+      - subtitle
+      - content
+      - authors
+    properties:
+      title:
+        type: string
+      subtitle:
+        type: string
+      content:
+        type: string
+      authors:
+        description: autor_id
+        type: array
+        items:
+          type: string
+  Artigos:
+    type: object
+    properties:
+      _id:
+        type: integer
+      createdAt:
+        type: string
+        format: date-time
+      updateAt:
+        type: string
+        format: date-time
+      title:
+        type: string
+      subtitle:
+        type: string
+      content:
+        type: string
+      permalink:
+        type: string
+      authors:
+        description: autor_id
+        type: array
+        items:
+          type: string
+  Autores:
+    properties:
+      _id:
+        type: integer
+      name:
+        type: string
+      sobrenome:
+        type: string
+  newAutor:
+    required:
+      - name
+    properties:
+      name:
+        type: string
+  newComentario:
+    required:
+      - comment
+      - artigo_id
+      - user_id
+    properties:
+      comment:
+        type: string
+      article:
+        type: string
+  Comentarios:
+    properties:
+      _id:
+        type: string
+      comment:
+        type: string
+      article:
+        type: integer
+      user:
+        type: integer
+  ComentarioUserArtigo:
+    properties:
+      _id:
+        type: integer
+      comment:
+        type: string
+      user:
+        $ref: "#/definitions/User"
+      article:
+        type: string
+
+  ComentarioAutorArtigo:
+    type: object
+    properties:
+      _id:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updateAt:
+        type: string
+        format: date-time
+      title:
+        type: string
+      subtitle:
+        type: string
+      content:
+        type: string
+      permalink:
+        type: string
+      authors:
+        description: autor_id
+        type: array
+        items:
+          type: string
+
+  User:
+    properties:
+      _id:
+        type: integer
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+  newUser:
+    properties:
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  Autentica:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+
+# Added by API Auto Mocking Plugin
+host: https://app.swaggerhub.com/apis-docs/palharez/Blog-Webedia/1.0.0/
+
+# schemes:
+#  - http
+# Added by API Auto Mocking Plugin
+schemes:
+  - https
+  - http
